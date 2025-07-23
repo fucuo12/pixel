@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>像素艺术生成器 · 高级版</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- 代码雨背景 -->
+  <canvas id="codeRainCanvas"></canvas>
+
+  <!-- 页面内容 -->
+  <h1>🎨 像素艺术生成器</h1>
+
+  <div class="controls">
+    <label for="colorPicker"><i class="fas fa-palette"></i> 画笔颜色：</label>
+    <input type="color" id="colorPicker" value="#000000">
+
+    <button id="clearBtn" class="btn"><i class="fas fa-eraser"></i> 清除</button>
+    <button id="exportBtn" class="btn"><i class="fas fa-download"></i> 导出</button>
+    <button id="undoBtn" class="btn"><i class="fas fa-undo"></i> 撤销</button>
+    <button id="eraseBtn" class="btn"><i class="fas fa-broom"></i> 橡皮</button>
+
+    <label><input type="checkbox" id="gridToggle"> 网格线</label>
+
+    <label for="uploadImage" class="custom-file-upload btn">
+      <i class="fas fa-upload"></i> 上传图片
+    </label>
+    <input type="file" id="uploadImage" accept="image/*" style="display: none;">
+
+    <label for="canvasSize">画布大小：</label>
+    <select id="canvasSize" class="btn-select">
+      <option value="30">小 (30x30)</option>
+      <option value="50" selected>中 (50x50)</option>
+      <option value="100">大 (100x100)</option>
+    </select>
+
+    <button id="resetCanvasBtn" class="btn"><i class="fas fa-redo-alt"></i> 重置</button>
+  </div>
+
+  <!-- 画布 -->
+  <div id="canvas" class="canvas"></div>
+
+  <!-- 确认裁剪按钮 -->
+  <button id="confirmBtn" class="btn">
+    <i class="fas fa-check"></i> 确认裁剪
+  </button>
+
+  <!-- 第三方库 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="script.js"></script>
+
+  <!-- 代码雨背景脚本 -->
+  <script>
+    const codeRainCanvas = document.getElementById("codeRainCanvas");
+    const ctx = codeRainCanvas.getContext("2d");
+
+    function resizeCodeRainCanvas() {
+      codeRainCanvas.width = window.innerWidth;
+      codeRainCanvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCodeRainCanvas);
+    resizeCodeRainCanvas();
+
+    const letters = "アァイィウヴエェオカガキギクグケゲコゴサザシジスズセゼソゾタダチッヂヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const fontSize = 14;
+    const columns = codeRainCanvas.width / fontSize;
+
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function drawCodeRain() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, codeRainCanvas.width, codeRainCanvas.height);
+
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > codeRainCanvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    setInterval(drawCodeRain, 33);
+  </script>
+</body>
+</html>
